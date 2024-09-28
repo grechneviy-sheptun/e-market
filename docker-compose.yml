@@ -1,0 +1,48 @@
+services:
+  postgres:
+    image: postgres:14
+    restart: always
+    environment:
+      - POSTGRES_USER=anton
+      - POSTGRES_PASSWORD=123
+      - POSTGRES_DB=users_db
+    ports:
+      - 5433:5432
+    networks:
+      - shared-network
+    volumes:
+      - ./postgres-db:/var/lib/postgresql/data
+
+  api:
+    container_name: django_api
+    restart: unless-stopped
+    image: django-api-local:1.0.0
+    build: 
+      context: backend/my_backend
+      dockerfile: Dockerfile
+    ports:
+      - 8000:8000
+    networks:
+      - shared-network
+    depends_on:
+      - postgres
+
+  frontend:
+    container_name: next_front
+    restart: unless-stopped
+    image: next-frontend-local:1.0.0
+    build: 
+      context: frontend/next-js-front
+      dockerfile: Dockerfile
+    ports:
+      - 3000:3000
+    networks:
+      - shared-network
+    depends_on:
+      - api
+
+
+
+
+networks:
+  shared-network:
