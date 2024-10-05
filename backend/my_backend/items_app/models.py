@@ -8,6 +8,7 @@ class CreateItem(models.Model):
     name = models.CharField(max_length=255)
     description = models.TextField()
     price = models.CharField(max_length=255)
+    photo = models.ImageField(upload_to="images/", null=True, blank=True)
     sale_date = models.DateField(auto_now_add=True)
 
     object = ItemManager()

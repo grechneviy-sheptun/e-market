@@ -1,11 +1,13 @@
 'use client'
-import { UserRound } from "lucide-react"
+import { UserRound, UserRoundPen } from "lucide-react"
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Link from "next/link";
 import Cookies from "js-cookie";
 import {user} from "../lib/definitions";
+import { useRouter } from "next/navigation";
 const Popup = () => {
+    const router = useRouter();
     const [isOpen, setIsOpen] = useState<boolean>(false);
 
     useEffect(() =>{
@@ -29,7 +31,8 @@ const Popup = () => {
     });
     const [responseData, setResponseData] = useState(null);
     const [error, setError] = useState("");
-    const [isLoading, setisLoading] = useState(false);
+    const [isLoading, setisLoading] = useState(true);
+    const [isLogged, setisLogged] = useState(false);
 
     const handleSubmit = async (e: React.FormEvent) =>{
         e.preventDefault();
@@ -43,23 +46,32 @@ const Popup = () => {
             if(res.status === 200){
                 Cookies.set('access_token', response.access_token, {sameSite:"Lax"});
                 setResponseData(response);
+                setisLogged(true);
             }
         } catch(error){
             setError("Login failed");
+        } finally {
+            setisLoading(false);
         }
     }
 
     }
-return(
+    return(
     <div>
-        <div>
-        <button className="inline-flex w-full justify-center gap-x-1.5 
-            rounded-md px-3 py-2 text-sm font-semibold" aria-expanded={isOpen} aria-haspopup="true"
+        <div className="flex justify-center">
+        <button className="inline-flex w-full gap-x-1.5 px-3 py-2 font-semibold" aria-expanded={isOpen} aria-haspopup="true"
             onClick={toggleMenu}>
             {<UserRound />}
         </button>
+        { isLogged && (
+        <Link href="/userProfile">
+            <button>
+                {<UserRoundPen/>}
+            </button>
+        </Link>
+        )}
         </div>
-        {  isOpen && (
+        { !isLogged && isOpen && (
             <div className="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 
             ring-black ring-opacity-5 focus:outline-none" 
             role="menu" aria-orientation="vertical" aria-labelledby="menu-button">

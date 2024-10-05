@@ -25,12 +25,9 @@ class CreateItemView(APIView):
         return Response(_('item created successfully'), status=status.HTTP_201_CREATED)
     
     def get(self, request, pk, format=None):
-        item = [item.name for item in CreateItem.object.all()]
-        description = [item.description for item in CreateItem.object.all()]
-        type_item  = [item.type_item  for item in CreateItem.object.all()]
-        price = [item.price  for item in CreateItem.object.all()]
-        return Response({'name':item[pk], 'description':description[pk], 
-                         'type_item':type_item[pk], 'price':price[pk]}, status=status.HTTP_200_OK)
+        items = CreateItem.object.all()
+        serializer = CreateItemSerializer(items, many=True)
+        return Response({'items': serializer.data}, status=status.HTTP_200_OK)
 
     def patch(self, request, pk):
         instance = get_object_or_404(CreateItem, id=pk)
@@ -43,6 +40,14 @@ class CreateItemView(APIView):
         item = CreateItem.object.get(id=pk)
         item.delete()
         return Response(_("item deleted successfully"), status=status.HTTP_204_NO_CONTENT)
+
+
+class GetItemView(APIView):
+    def get(self, request):
+        items = CreateItem.object.all()
+        serializer = CreateItemSerializer(items, many=True)
+        return Response({'items': serializer.data}, status=status.HTTP_200_OK)
+
 
 class FilterItemView(ListAPIView):
     serializer_class =  CreateItemSerializer

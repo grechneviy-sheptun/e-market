@@ -4,6 +4,7 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 const Register = () => {
     const router = useRouter();
+    const [isLoading, setIsLoading] = useState(true);
     const [Error, setError] = useState<string>("");
     const [Verified, setisVerified] = useState<boolean>(false);
     const [PostData, setPostData] = useState({
@@ -27,9 +28,13 @@ const Register = () => {
             }
         }catch(error){
             setError("Registration failed");
+        } finally {
+            setIsLoading(false);
         }
     }
-
+    if(isLoading){
+        return(<div>Loading...</div>);
+    }
     return(
         <div className="flex justify-center items-center h-[700px]">
             <form method="POST" onSubmit={handleSubmit}>
