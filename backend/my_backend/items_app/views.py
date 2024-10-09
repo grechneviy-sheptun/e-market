@@ -1,5 +1,5 @@
-from .serializers import CreateItemSerializer
-from .models import CreateItem
+from .serializers import CreateItemSerializer, CartItemSerializer, CartSerializer
+from .models import CreateItem, CartItem, Basket
 from .permissions import IsOnwerOrReadOnly
 from .utils import ItemFilter
 from auth_app.authentication import OwnAuthentication
@@ -21,7 +21,7 @@ class CreateItemView(APIView):
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
-        serializer.save(owner=self.request.user)
+        serializer.save(owner=request.user)
         return Response(_('item created successfully'), status=status.HTTP_201_CREATED)
     
     def get(self, request, pk, format=None):
@@ -38,6 +38,7 @@ class CreateItemView(APIView):
     
     def delete(self, request, pk):
         item = CreateItem.object.get(id=pk)
+        self.check_object_permissions(request, item)
         item.delete()
         return Response(_("item deleted successfully"), status=status.HTTP_204_NO_CONTENT)
 
@@ -57,3 +58,19 @@ class FilterItemView(ListAPIView):
     def get_queryset(self):
         items = CreateItem.object.filter()
         return items
+    
+
+class AddItemToCart(APIView):
+    def post(self, request, product_id):
+        cart, created = Basket.objects.get_or_create(user=request.user)
+        product = get_object_or_404(CreateItem, id=product_id)
+        cart_item, created = CartItem.objects.get_or_create(cart=cart, product=product)
+        cart_item.quantity += 1
+        cart_item.save()
+        return Response({'message': 'Product added to cart'}, status=status.HTTP_200_OK)
+    
+class RemoveItemFromCart(APIView):
+    def delete(self, request, item_id):
+        cart_item = get_object_or_404(CartItem, id=item_id)
+        cart_item.delete()
+        return Response({'message': 'item removed from card'}, status=status.HTTP_204_NO_CONTENT)

@@ -2,9 +2,16 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { item } from "./lib/definitions";
+import { Heart } from "lucide-react";
 const CreateItem = () => {
     const [items, setItems] = useState<item[]>([]);
     const [isLoading, setisLoading] = useState(true);
+    const [isClicked, setIsClicked] = useState(false);
+
+    const handleClick = () => {
+        setIsClicked(!isClicked);
+    }
+
     useEffect(() => {
         const fetchItems = async () =>{
             try {
@@ -32,6 +39,7 @@ const CreateItem = () => {
                     <p>Type: {item.type_item}</p>
                     <p>Price: {item.price}</p>
                     <p>ID: {item.id}</p>
+                    <button onClick={handleClick}><Heart fill = {isClicked ? "#e01b24" : 'none'} /></button>
                 </div>
             ))}
 

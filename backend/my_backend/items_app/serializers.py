@@ -1,4 +1,4 @@
-from .models import CreateItem
+from .models import CreateItem, Basket, CartItem
 from rest_framework import serializers
 from django.utils.translation import gettext_lazy as _
 from auth_app.models import Users
@@ -57,5 +57,20 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = 'Users'
         fields = ('id', 'username', 'name')
+
+class CartItemSerializer(serializers.ModelSerializer):
+    product = CreateItemSerializer(read_only=True)
+    product_id = serializers.PrimaryKeyRelatedField(queryset=CreateItem.object.all(), write_only=True, source='product')
+
+    class Meta:
+        model = CartItem
+        fields = ['id', 'product', 'product_id', 'quantity', 'get_total_price']
+
+class CartSerializer(serializers.ModelSerializer):
+    items = CartItemSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Basket
+        fields = ['id', 'user', 'created_at', 'items']
 
 

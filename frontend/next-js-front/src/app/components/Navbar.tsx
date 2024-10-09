@@ -1,4 +1,5 @@
 import Popup from "./Popup"
+import Link from "next/link";
 const Navbar = () => {
     return(
     <header>
@@ -13,8 +14,15 @@ const Navbar = () => {
                 </div>
                 <div className="md:flex list-none relative justify-center">
                     <ul className="flex space-x-8">
+
                         <li className="text-gray-700 hover:text-black">Телефони</li>
-                        <li className="text-gray-700 hover:text-black">Ноутбуки</li>
+
+                        <li className="text-gray-700 hover:text-black"> 
+                            <Link href="items/[slug]" as={`items/Laptop`}>
+                                Ноутбуки 
+                            </Link>
+                        </li>
+                   
                         <li className="text-gray-700 hover:text-black">Планшети</li>
                         <li className="text-gray-700 hover:text-black">Накопичувачі</li>
                         <li className="text-gray-700 hover:text-black">Процесори</li>

@@ -13,3 +13,7 @@ export type item = {
     photo: string | File | null;
 }
 
+export type ItemsPageProps = {
+    params: { slug: string };
+  }
+

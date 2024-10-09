@@ -6,7 +6,6 @@ const Otp = () => {
     const router = useRouter();
     const [Otp, setOtp] = useState<string>("");
     const [error, setError] = useState<string>("");    
-    const [isLoading, setIsLoading] = useState(true);
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if(!Otp){
@@ -19,13 +18,8 @@ const Otp = () => {
                 }
             } catch(error){
                 setError("Can`t confirm your otp");
-            } finally {
-                setIsLoading(false);
-            }
+            } 
         }
-    }
-    if(isLoading){
-        return(<div>Loading...</div>);
     }
     return(
     <div className="flex justify-center items-center h-[700px]">
